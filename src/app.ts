@@ -17,6 +17,7 @@ app.use(cookieParser());
 // Routes
 app.use('/user', routes.userRoutes);
 app.use('/item', routes.itemRoutes);
+app.use('/notification', routes.notificationRoutes);
 
 // Home Route
 app.get('/', cors(), async (req, res) => {
