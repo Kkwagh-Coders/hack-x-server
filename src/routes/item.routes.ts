@@ -9,5 +9,6 @@ router.options('', cors(corsOptionForCredentials));
 router.get('', cors(corsOptionForCredentials), itemController.itemSearch);
 router.post('', cors(corsOptionForCredentials), itemController.createItem);
 router.put('', cors(corsOptionForCredentials), itemController.editItem);
+router.delete('', cors(corsOptionForCredentials), itemController.deleteItem);
 
 export default router;
