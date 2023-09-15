@@ -44,3 +44,20 @@ export type ILog = {
   createdAt: Date;
   action: IActionType;
 };
+
+export type ILogDisplay = {
+  userId: {
+    _id: Types.ObjectId;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    email: string;
+    designation: string;
+    department: string;
+    role: IUserRole;
+  };
+  oldItem: IItem;
+  newItem: IItem;
+  createdAt: Date;
+  action: IActionType;
+};

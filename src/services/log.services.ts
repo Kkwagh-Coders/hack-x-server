@@ -1,5 +1,5 @@
 import LogModel from '../model/log.model';
-import { IItem } from '../types';
+import { IItem, ILogDisplay } from '../types';
 
 export const add = (
   userId: string,
@@ -16,15 +16,9 @@ export const add = (
 };
 
 export const searchLogs = (limit: number, skip: number) => {
-  return LogModel.aggregate([
-    {
-      $skip: skip,
-    },
-    {
-      $limit: limit,
-    },
-    {
-      $sort: { createdAt: -1 },
-    },
-  ]);
+  return LogModel.find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .populate<ILogDisplay>({ path: 'userId', select: '-password' });
 };
