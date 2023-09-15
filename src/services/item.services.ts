@@ -68,3 +68,7 @@ export const editItem = (itemId: string, itemData: IItemForm) => {
 export const deleteItem = (itemId: string) => {
   return ItemModel.deleteOne({ _id: itemId });
 };
+
+export const getItem = (itemId: string) => {
+  return ItemModel.findOne({ _id: itemId });
+};

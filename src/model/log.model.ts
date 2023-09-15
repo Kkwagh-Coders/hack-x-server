@@ -1,7 +1,7 @@
-import { Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { ILog } from '../types';
 
-const log = new Schema<ILog>({
+const logSchema = new Schema<ILog>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   oldItem: {
     type: {
@@ -32,3 +32,5 @@ const log = new Schema<ILog>({
   createdAt: { type: Date, default: Date.now },
   action: { type: String, required: true },
 });
+
+export default mongoose.model<ILog>('Log', logSchema);

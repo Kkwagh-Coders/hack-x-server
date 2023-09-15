@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as itemServices from '../services/item.services';
-import { IItemForm } from '../types';
+import * as logServices from '../services/log.services';
+import { IItem, IItemForm } from '../types';
 
 export const itemSearch = async (req: Request, res: Response) => {
   let search = req.query['search'] as string;
@@ -53,8 +54,18 @@ export const itemSearch = async (req: Request, res: Response) => {
 };
 
 export const createItem = async (req: Request, res: Response) => {
-  const { name, description, working, notWorking, location, category, expiry } =
-    req.body;
+  const {
+    name,
+    description,
+    working,
+    notWorking,
+    location,
+    category,
+    expiry,
+    authTokenData,
+  } = req.body;
+
+  const userId = authTokenData.id;
 
   if (!name || !description || !working || !location || !category || !expiry) {
     return res.status(401).json({
@@ -74,7 +85,25 @@ export const createItem = async (req: Request, res: Response) => {
       updatedAt: new Date(),
     };
 
+    const oldData: IItem = {
+      name: '',
+      description: '',
+      working: 0,
+      notWorking: 0,
+      location: '',
+      category: '',
+      expiry: new Date(),
+      updatedAt: new Date(),
+      createdAt: new Date(),
+    };
+
     await itemServices.createItem(itemData);
+    await logServices.add(
+      userId,
+      oldData,
+      { ...itemData, createdAt: new Date() },
+      'created',
+    );
 
     return res.status(200).json({ message: 'Item Created Successfully' });
   } catch (error) {
@@ -93,7 +122,10 @@ export const editItem = async (req: Request, res: Response) => {
     category,
     expiry,
     itemId,
+    authTokenData,
   } = req.body;
+
+  const userId = authTokenData.id;
 
   if (!name || !description || !location || !category || !expiry || !itemId) {
     return res.status(401).json({
@@ -101,7 +133,6 @@ export const editItem = async (req: Request, res: Response) => {
     });
   }
   try {
-    // TODO : add data into log table
     const itemData: IItemForm = {
       name,
       description,
@@ -112,7 +143,24 @@ export const editItem = async (req: Request, res: Response) => {
       expiry,
       updatedAt: new Date(),
     };
+
+    const oldData: IItem | null = await itemServices.getItem(itemId);
+    if (!oldData) {
+      return;
+    }
+
+    await logServices.add(
+      userId,
+      oldData,
+      {
+        ...itemData,
+        createdAt: oldData?.createdAt,
+      },
+      'updated',
+    );
+
     await itemServices.editItem(itemId, itemData);
+
     return res.status(200).json({ message: 'Item Edited Successfully' });
   } catch (error) {
     console.log(error);
@@ -121,7 +169,7 @@ export const editItem = async (req: Request, res: Response) => {
 };
 
 export const deleteItem = async (req: Request, res: Response) => {
-  const { itemId } = req.body;
+  const { itemId, authTokenData } = req.body;
 
   if (!itemId) {
     return res.status(404).json({
@@ -129,9 +177,78 @@ export const deleteItem = async (req: Request, res: Response) => {
     });
   }
 
+  const userId = authTokenData.id;
+
   try {
+    const oldData: IItem | null = await itemServices.getItem(itemId);
+    if (!oldData) {
+      return;
+    }
+
+    const newData: IItem = {
+      name: '',
+      description: '',
+      working: 0,
+      notWorking: 0,
+      location: '',
+      category: '',
+      expiry: new Date(),
+      updatedAt: new Date(),
+      createdAt: new Date(),
+    };
+
+    await logServices.add(
+      userId,
+      oldData,
+      {
+        ...newData,
+        createdAt: oldData?.createdAt,
+      },
+      'deleted',
+    );
+
     await itemServices.deleteItem(itemId);
     return res.status(200).json({ message: 'Item Deleted Successfully' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: 'something went wrong...' });
+  }
+};
+
+export const getAllLog = async (req: Request, res: Response) => {
+  let page = parseInt(req.query['page'] as string) - 1;
+  let limit = parseInt(req.query['limit'] as string);
+
+  if (!page || page < 0) page = 0;
+  if (!limit || limit <= 0) limit = 10;
+
+  if (limit > 100) {
+    return res.status(500).json({ message: 'Limit cannot exceed 100' });
+  }
+
+  const skip = limit * page;
+  try {
+    const logList = await logServices.searchLogs(limit, skip);
+
+    if (logList.length === 0) {
+      return res.status(200).json({
+        message: 'No Logs to display',
+        data: [],
+        page: { previousPage: page === 0 ? undefined : page },
+      });
+    }
+
+    // as frontend is 1 based page index
+    const nextPage = page + 2;
+
+    // previous page is returned as page because for 1 based indexing page is the previous page as page-1 is done
+    const previousPage = page === 0 ? undefined : page;
+
+    return res.status(200).json({
+      message: 'Logs fetched successfully',
+      data: logList,
+      page: { nextPage, previousPage },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: 'something went wrong...' });
