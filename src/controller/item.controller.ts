@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import * as itemServices from '../services/item.services';
 import * as logServices from '../services/log.services';
 import { IItem, IItemForm } from '../types';
+import { createNotification } from './notification.controller';
+
+const THREASHOLD = 20;
 
 export const itemSearch = async (req: Request, res: Response) => {
   let search = req.query['search'] as string;
@@ -114,7 +117,7 @@ export const createItem = async (req: Request, res: Response) => {
 
 export const editItem = async (req: Request, res: Response) => {
   const { notWorking, authTokenData, itemId } = req.body;
-
+  // notWorking = new Quantity
   const userId = authTokenData.id;
 
   try {
@@ -123,9 +126,11 @@ export const editItem = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'No entry found' });
     }
 
+    const newQuantity = notWorking;
+    const oldQuantity = oldData.working;
+
     const newData = {
       notWorking,
-
       name: oldData.name,
       description: oldData.description,
       working: oldData.working,
@@ -136,9 +141,20 @@ export const editItem = async (req: Request, res: Response) => {
       expiry: oldData.expiry,
     };
 
+    // add edit entry into log
     await logServices.add(userId, oldData, newData, 'updated');
 
+    // edit the item
     await itemServices.editItem(itemId, newData);
+
+    // check for alert
+    const threasholdValue = Math.round((THREASHOLD / 100) * oldQuantity);
+    if (newQuantity < threasholdValue) {
+      await createNotification(
+        `${newData.name} is below threshold`,
+        'low-inventory',
+      );
+    }
 
     return res.status(200).json({ message: 'Item Edited Successfully' });
   } catch (error) {
