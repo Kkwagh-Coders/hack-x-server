@@ -124,8 +124,16 @@ export const editItem = async (req: Request, res: Response) => {
     }
 
     const newData = {
-      ...oldData,
       notWorking,
+
+      name: oldData.name,
+      description: oldData.description,
+      working: oldData.working,
+      location: oldData.location,
+      category: oldData.category,
+      createdAt: oldData.createdAt,
+      updatedAt: oldData.updatedAt,
+      expiry: oldData.expiry,
     };
 
     await logServices.add(userId, oldData, newData, 'updated');
