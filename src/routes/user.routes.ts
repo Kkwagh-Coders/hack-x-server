@@ -16,8 +16,11 @@ router.options('/all', cors(corsOptionForCredentials));
 router.get('/all', cors(corsOptionForCredentials), userController.getAllUser);
 
 router.options('/count', cors(corsOptionForCredentials));
-router.get('/count', cors(corsOptionForCredentials), userController.getDashboardCounts);
-
+router.get(
+  '/count',
+  cors(corsOptionForCredentials),
+  userController.getDashboardCounts,
+);
 
 router.options('/login', cors(corsOptionForCredentials));
 router.post('/login', cors(corsOptionForCredentials), userController.login);
@@ -34,6 +37,13 @@ router.post(
   '/register',
   cors(corsOptionForCredentials),
   userController.register,
+);
+
+router.options('/:id', cors(corsOptionForCredentials));
+router.delete(
+  '/:id',
+  cors(corsOptionForCredentials),
+  userController.deleteUser,
 );
 
 //user password routes

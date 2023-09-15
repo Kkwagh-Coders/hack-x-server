@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
+import { Types } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import SendForgotPasswordMail from '../services/mail/SendForgotPasswordMail';
 import * as userServices from '../services/user.services';
@@ -340,5 +341,21 @@ export const getDashboardCounts = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: 'Error, generate new password link' });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  const userId = req.params['id'];
+
+  if (!Types.ObjectId.isValid(userId)) {
+    return res.status(404).json({ message: 'Invalid User' });
+  }
+
+  try {
+    await userServices.deleteUser(userId);
+    return res.status(200).json({ message: 'User Deleted' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: 'Something went wrong...' });
   }
 };
