@@ -56,15 +56,7 @@ export const createItem = async (req: Request, res: Response) => {
   const { name, description, working, notWorking, location, category, expiry } =
     req.body;
 
-  if (
-    !name ||
-    !description ||
-    !working ||
-    !notWorking ||
-    !location ||
-    !category ||
-    !expiry
-  ) {
+  if (!name || !description || !working || !location || !category || !expiry) {
     return res.status(401).json({
       message: 'Please enter all fields',
     });
