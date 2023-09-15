@@ -57,20 +57,20 @@ export const searchUser = (
     {
       $sort: { [sortBy]: type },
     },
-    {
-      $project: {
-        name: 1,
-        description: 1,
-        working: 1,
-        notWorking: 1,
-        location: 1,
-        category: 1,
-        createdAt: 1,
-        updatedAt: 1,
-        expiry: 1,
-        _id: 1,
-      },
-    },
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     name: 1,
+    //     description: 1,
+    //     working: 1,
+    //     notWorking: 1,
+    //     location: 1,
+    //     category: 1,
+    //     createdAt: 1,
+    //     updatedAt: 1,
+    //     expiry: 1,
+    //   },
+    // },
   ]);
 };
 
