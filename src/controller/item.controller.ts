@@ -95,16 +95,7 @@ export const editItem = async (req: Request, res: Response) => {
     itemId,
   } = req.body;
 
-  if (
-    !name ||
-    !description ||
-    !working ||
-    !notWorking ||
-    !location ||
-    !category ||
-    !expiry ||
-    !itemId
-  ) {
+  if (!name || !description || !location || !category || !expiry || !itemId) {
     return res.status(401).json({
       message: 'Please enter all fields',
     });
