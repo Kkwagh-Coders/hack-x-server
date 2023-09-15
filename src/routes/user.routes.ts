@@ -17,6 +17,13 @@ router.get('/all', cors(corsOptionForCredentials), userController.getAllUser);
 router.options('/login', cors(corsOptionForCredentials));
 router.post('/login', cors(corsOptionForCredentials), userController.login);
 
+router.options('/logout', cors(corsOptionForCredentials));
+router.post(
+  '/logout',
+  cors(corsOptionForCredentials),
+  userController.logoutUser,
+);
+
 router.options('/register', cors(corsOptionForCredentials));
 router.post(
   '/register',

@@ -80,6 +80,11 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+export const logoutUser = (req: Request, res: Response) => {
+  res.clearCookie('token', cookieOptions);
+  return res.status(200).json({ message: 'User Logout successful' });
+};
+
 export const register = async (req: Request, res: Response) => {
   const {
     firstName,
