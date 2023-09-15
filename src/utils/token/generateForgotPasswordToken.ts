@@ -2,7 +2,11 @@ import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import { IAuthToken } from '../../types/token.types';
 
-const generateForgotPasswordToken = (id: Types.ObjectId, email: string) => {
+const generateForgotPasswordToken = (
+  id: Types.ObjectId,
+  email: string,
+  role: string,
+) => {
   if (!process.env['SECRET_KEY']) {
     console.log('JWT key is undefined');
     throw new Error('JWT SECRET_KEY key not defined');
@@ -11,6 +15,7 @@ const generateForgotPasswordToken = (id: Types.ObjectId, email: string) => {
   const tokenBody: IAuthToken = {
     id,
     email,
+    role,
   };
 
   // Time the token is valid for
