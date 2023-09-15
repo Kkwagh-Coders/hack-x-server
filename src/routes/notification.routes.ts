@@ -11,6 +11,19 @@ router.get(
   cors(corsOptionForCredentials),
   notificationController.getAllNotifications,
 );
+
+router.get(
+  '/count',
+  cors(corsOptionForCredentials),
+  notificationController.getNewNotificationCount,
+);
+
+// router.post(
+//   '/add',
+//   cors(corsOptionForCredentials),
+//   notificationController.createNotificationHelper,
+// );
+
 // router.get('/count', getNotViewedCount);
 
 export default router;
