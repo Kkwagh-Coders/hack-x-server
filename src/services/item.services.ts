@@ -72,3 +72,21 @@ export const deleteItem = (itemId: string) => {
 export const getItem = (itemId: string) => {
   return ItemModel.findOne({ _id: itemId });
 };
+
+export const getCategoryWiseCount = () => {
+  return ItemModel.aggregate([
+    {
+      $group: {
+        _id: '$category',
+        value: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        name: '$_id',
+        value: 1,
+      },
+    },
+  ]);
+};

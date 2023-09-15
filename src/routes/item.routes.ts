@@ -7,13 +7,22 @@ import isUserAuth from '../middleware/middleware';
 const router = Router();
 
 router.options('', cors(corsOptionForCredentials));
+
 router.get('', cors(corsOptionForCredentials), itemController.itemSearch);
+
+router.get(
+  '/count',
+  cors(corsOptionForCredentials),
+  itemController.categoryCount,
+);
+
 router.post(
   '',
   cors(corsOptionForCredentials),
   isUserAuth,
   itemController.createItem,
 );
+
 router.put(
   '',
   cors(corsOptionForCredentials),
@@ -28,4 +37,5 @@ router.delete(
 );
 
 router.get('/logs', cors(corsOptionForCredentials), itemController.getAllLog);
+
 export default router;
