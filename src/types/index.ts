@@ -61,3 +61,9 @@ export type ILogDisplay = {
   createdAt: Date;
   action: IActionType;
 };
+
+export type INotification = {
+  isViewed: boolean;
+  text: string;
+  type: string;
+};

@@ -113,53 +113,24 @@ export const createItem = async (req: Request, res: Response) => {
 };
 
 export const editItem = async (req: Request, res: Response) => {
-  const {
-    name,
-    description,
-    working,
-    notWorking,
-    location,
-    category,
-    expiry,
-    itemId,
-    authTokenData,
-  } = req.body;
+  const { notWorking, authTokenData, itemId } = req.body;
 
   const userId = authTokenData.id;
 
-  if (!name || !description || !location || !category || !expiry || !itemId) {
-    return res.status(401).json({
-      message: 'Please enter all fields',
-    });
-  }
   try {
-    const itemData: IItemForm = {
-      name,
-      description,
-      working,
-      notWorking,
-      location,
-      category,
-      expiry,
-      updatedAt: new Date(),
-    };
-
     const oldData: IItem | null = await itemServices.getItem(itemId);
     if (!oldData) {
-      return;
+      return res.status(404).json({ message: 'No entry found' });
     }
 
-    await logServices.add(
-      userId,
-      oldData,
-      {
-        ...itemData,
-        createdAt: oldData?.createdAt,
-      },
-      'updated',
-    );
+    const newData = {
+      ...oldData,
+      notWorking,
+    };
 
-    await itemServices.editItem(itemId, itemData);
+    await logServices.add(userId, oldData, newData, 'updated');
+
+    await itemServices.editItem(itemId, newData);
 
     return res.status(200).json({ message: 'Item Edited Successfully' });
   } catch (error) {
