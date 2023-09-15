@@ -5,7 +5,8 @@ const SendForgotPasswordMail = async (email: string, token: string) => {
     throw new Error('CLIENT_BASE_URL not Defined');
   }
 
-  const verificationURL = CLIENT_BASE_URL + '/' + 'reset-password/' + token;
+  const verificationURL =
+    CLIENT_BASE_URL + '/' + 'reset-password/' + token + '/';
   const senderEmail = process.env['MAIL_USER'];
   const emailSubject = 'Reset Password Link';
   const emailTemplate = 'forgot_password_email';
