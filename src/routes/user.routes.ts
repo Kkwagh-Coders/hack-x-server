@@ -25,6 +25,12 @@ router.post(
 );
 
 router.options('/register', cors(corsOptionForCredentials));
+router.post(
+  '/register',
+  cors(corsOptionForCredentials),
+  userController.register,
+);
+
 //user password routes
 router.options('/forgot-password', cors(corsOptionForCredentials));
 router.post(
