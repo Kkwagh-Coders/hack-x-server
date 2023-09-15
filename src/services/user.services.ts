@@ -53,13 +53,13 @@ export const searchUser = (
       },
     },
     {
+      $sort: { [sortBy]: type },
+    },
+    {
       $skip: skip,
     },
     {
       $limit: limit,
-    },
-    {
-      $sort: { [sortBy]: type },
     },
   ]);
 };
