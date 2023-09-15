@@ -2,7 +2,7 @@ import NotificationModel from '../model/notification.model';
 
 export const getAllNewNotifications = async () => {
   const notificationList = await NotificationModel.find().sort({
-    createdAt: 1,
+    createdAt: -1,
   });
   await NotificationModel.updateMany({}, { $set: { isViewed: true } });
 
