@@ -31,13 +31,13 @@ export const searchItem = (
       },
     },
     {
+      $sort: { [sortBy]: type },
+    },
+    {
       $skip: skip,
     },
     {
       $limit: limit,
-    },
-    {
-      $sort: { [sortBy]: type },
     },
     {
       $project: {
