@@ -35,3 +35,5 @@ router.post(
 
 router.options('/reset-password/:token', cors());
 router.post('/reset-password/:token', cors(), userController.resetPassword);
+
+export default router;
