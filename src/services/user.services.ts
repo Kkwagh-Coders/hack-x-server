@@ -73,3 +73,7 @@ export const searchUser = (
     },
   ]);
 };
+
+export const resetPassword = (email: string, newPassword: string) => {
+  return UserModel.findOneAndUpdate({ email }, { password: newPassword });
+};

@@ -1,11 +1,14 @@
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import SendForgotPasswordMail from '../services/mail/SendForgotPasswordMail';
 import * as userServices from '../services/user.services';
 import { IUser } from '../types';
-import { IAuthToken } from '../types/token.types';
+import { TypeRequestBody } from '../types/request.types';
+import { IAuthToken, IForgotPasswordToken } from '../types/token.types';
 import decodeToken from '../utils/decodeToken';
 import generateAuthToken from '../utils/generateAuthToken';
+import generateForgotPasswordToken from '../utils/token/generateForgotPasswordToken';
 
 const EXPIRY_DAYS = 180;
 
@@ -86,15 +89,8 @@ export const logoutUser = (req: Request, res: Response) => {
 };
 
 export const register = async (req: Request, res: Response) => {
-  const {
-    firstName,
-    middleName,
-    lastName,
-    email,
-    designation,
-    department,
-    role,
-  } = req.body;
+  const { firstName, middleName, lastName, email, designation, department } =
+    req.body;
 
   if (
     !firstName ||
@@ -102,8 +98,7 @@ export const register = async (req: Request, res: Response) => {
     !lastName ||
     !email ||
     !designation ||
-    !department ||
-    !role
+    !department
   ) {
     return res
       .status(401)
@@ -131,7 +126,7 @@ export const register = async (req: Request, res: Response) => {
       email,
       designation,
       department,
-      role,
+      role: 'teacher',
       password: hashPassword,
     };
 
@@ -240,3 +235,82 @@ export const getAllUser = async (req: Request, res: Response) => {
 };
 
 export const editUser = async (req: Request, res: Response) => {};
+
+export const forgotPassword = async (
+  req: TypeRequestBody<{ email?: string }>,
+  res: Response,
+) => {
+  const email = req.body.email;
+
+  // if email is undefined
+  if (!email) {
+    return res
+      .status(401)
+      .json({ message: 'Please enter all required fields ' });
+  }
+
+  try {
+    // check if email is not-registered
+    const user = await userServices.findUser(email);
+    if (!user) {
+      return res.status(401).json({ message: 'No such email found' });
+    }
+
+    // Creating a jwt token and sending it to the user
+    const token = generateForgotPasswordToken(user._id, email);
+
+    // send email to the user
+    SendForgotPasswordMail(email, token);
+
+    return res
+      .status(200)
+      .json({ message: `A password reset link is sent to ${email}` });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: 'Error, Please try again later' });
+  }
+};
+
+export const resetPassword = async (
+  req: TypeRequestBody<{ email?: string; newPassword?: string }>,
+  res: Response,
+) => {
+  const email = req.body.email;
+  const newPassword = req.body.newPassword;
+  const resetPasswordToken = req.params['token'];
+
+  if (!email) {
+    return res.status(401).json({ message: 'Please enter Email' });
+  }
+
+  if (!newPassword) {
+    return res.status(401).json({ message: 'Please enter new Password ' });
+  }
+
+  try {
+    const tokenData = decodeToken(resetPasswordToken) as IForgotPasswordToken;
+
+    if (email !== tokenData.email) {
+      return res.status(403).json({ message: 'Reset Link is not valid' });
+    }
+
+    const user = await userServices.findUser(tokenData.email);
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: 'Please create a new Reset Password Link' });
+    }
+
+    // Hash the password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+
+    // Resetting the password
+    await userServices.resetPassword(tokenData.email, hashedNewPassword);
+    return res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: 'Error, generate new password link' });
+  }
+};

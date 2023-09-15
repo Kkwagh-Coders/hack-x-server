@@ -25,10 +25,13 @@ router.post(
 );
 
 router.options('/register', cors(corsOptionForCredentials));
+//user password routes
+router.options('/forgot-password', cors(corsOptionForCredentials));
 router.post(
-  '/register',
+  '/forgot-password',
   cors(corsOptionForCredentials),
-  userController.register,
+  userController.forgotPassword,
 );
 
-export default router;
+router.options('/reset-password/:token', cors());
+router.post('/reset-password/:token', cors(), userController.resetPassword);
