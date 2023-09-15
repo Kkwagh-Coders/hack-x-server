@@ -1,4 +1,8 @@
-import UserModel from '../model/user.model';
+import ItemModel from '../model/item.model';
+import {
+  default as UserModel,
+  default as userModel,
+} from '../model/user.model';
 import { IUser } from '../types';
 
 export const findUser = (email: string) => {
@@ -57,23 +61,45 @@ export const searchUser = (
     {
       $sort: { [sortBy]: type },
     },
-    // {
-    //   $project: {
-    //     _id: 1,
-    //     name: 1,
-    //     description: 1,
-    //     working: 1,
-    //     notWorking: 1,
-    //     location: 1,
-    //     category: 1,
-    //     createdAt: 1,
-    //     updatedAt: 1,
-    //     expiry: 1,
-    //   },
-    // },
   ]);
 };
 
 export const resetPassword = (email: string, newPassword: string) => {
   return UserModel.findOneAndUpdate({ email }, { password: newPassword });
+};
+
+export const getDashboardCardCount = () => {
+  return userModel.aggregate([
+    {
+      $group: {
+        _id: '$role',
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        role: '$_id',
+        count: 1,
+      },
+    },
+  ]);
+};
+
+export const getTotalInventoryCount = () => {
+  return ItemModel.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalWorking: { $sum: '$working' },
+      },
+    },
+    // {
+    //   $project: {
+    //     _id: 0,
+    //     role: '_id',
+    //     count: 1,
+    //   },
+    // },
+  ]);
 };

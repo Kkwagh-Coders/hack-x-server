@@ -314,3 +314,31 @@ export const resetPassword = async (
       .json({ message: 'Error, generate new password link' });
   }
 };
+
+export const getDashboardCounts = async (req: Request, res: Response) => {
+  try {
+    let cardCount = await userServices.getDashboardCardCount();
+    let temp = await userServices.getTotalInventoryCount();
+
+    cardCount.push({
+      role: 'inventoryCount',
+      count: temp[0].totalWorking,
+    });
+
+    const result: any = {
+      teacher: 0,
+      admin: 0,
+      staff: 0,
+      inventoryCount: 0,
+    };
+
+    cardCount.forEach((item) => (result[item.role] = item.count));
+
+    return res.status(200).json({ message: 'List', data: result });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: 'Error, generate new password link' });
+  }
+};
