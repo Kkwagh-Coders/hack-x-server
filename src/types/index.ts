@@ -66,4 +66,5 @@ export type INotification = {
   isViewed: boolean;
   text: string;
   type: string;
+  createdAt: Date;
 };
