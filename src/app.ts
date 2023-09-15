@@ -1,6 +1,7 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import routes from './routes';
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
+app.use('/user', routes.userRoutes);
+app.use('/item', routes.itemRoutes);
 
 // Home Route
 app.get('/', cors(), async (req, res) => {

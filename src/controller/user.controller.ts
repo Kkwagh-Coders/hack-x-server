@@ -81,8 +81,15 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const register = async (req: Request, res: Response) => {
-  const { firstName, middleName, lastName, email, designation, department } =
-    req.body;
+  const {
+    firstName,
+    middleName,
+    lastName,
+    email,
+    designation,
+    department,
+    role,
+  } = req.body;
 
   if (
     !firstName ||
@@ -90,7 +97,8 @@ export const register = async (req: Request, res: Response) => {
     !lastName ||
     !email ||
     !designation ||
-    !department
+    !department ||
+    !role
   ) {
     return res
       .status(401)
@@ -110,7 +118,7 @@ export const register = async (req: Request, res: Response) => {
     const hashPassword = await bcrypt.hash(password, 12);
 
     // TODO : no token ?
-    
+
     const userData: IUser = {
       firstName,
       middleName,
@@ -118,7 +126,7 @@ export const register = async (req: Request, res: Response) => {
       email,
       designation,
       department,
-      role: 'teacher',
+      role,
       password: hashPassword,
     };
 
@@ -176,6 +184,4 @@ export const getLoginStatus = async (req: Request, res: Response) => {
   }
 };
 
-export const editUser = async(req: Request, res: Response) => {
-  
-}
+export const editUser = async (req: Request, res: Response) => {};

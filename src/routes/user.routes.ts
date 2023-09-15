@@ -14,3 +14,12 @@ router.get(
 
 router.options('/login', cors(corsOptionForCredentials));
 router.post('/login', cors(corsOptionForCredentials), userController.login);
+
+router.options('/register', cors(corsOptionForCredentials));
+router.post(
+  '/register',
+  cors(corsOptionForCredentials),
+  userController.register,
+);
+
+export default router;
