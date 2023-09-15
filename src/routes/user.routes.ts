@@ -12,6 +12,8 @@ router.get(
   userController.getLoginStatus,
 );
 
+router.get('/all', cors(corsOptionForCredentials), userController.getAllUser);
+
 router.options('/login', cors(corsOptionForCredentials));
 router.post('/login', cors(corsOptionForCredentials), userController.login);
 
