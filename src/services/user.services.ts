@@ -21,13 +21,27 @@ export const searchUser = (
       $match: {
         $or: [
           {
-            name: {
+            firstName: {
               $regex: new RegExp(search, 'i'),
             },
-            description: {
+          },
+          {
+            middleName: {
               $regex: new RegExp(search, 'i'),
             },
-            location: {
+          },
+          {
+            lastName: {
+              $regex: new RegExp(search, 'i'),
+            },
+          },
+          {
+            designation: {
+              $regex: new RegExp(search, 'i'),
+            },
+          },
+          {
+            department: {
               $regex: new RegExp(search, 'i'),
             },
           },
@@ -54,6 +68,7 @@ export const searchUser = (
         createdAt: 1,
         updatedAt: 1,
         expiry: 1,
+        _id: 1,
       },
     },
   ]);

@@ -16,9 +16,13 @@ export const searchItem = (
             name: {
               $regex: new RegExp(search, 'i'),
             },
+          },
+          {
             description: {
               $regex: new RegExp(search, 'i'),
             },
+          },
+          {
             location: {
               $regex: new RegExp(search, 'i'),
             },
@@ -46,6 +50,7 @@ export const searchItem = (
         createdAt: 1,
         updatedAt: 1,
         expiry: 1,
+        _id: 1,
       },
     },
   ]);
@@ -59,4 +64,3 @@ export const editItem = (itemId: string, itemData: IItemForm) => {
   const filter = { _id: itemId };
   return ItemModel.findByIdAndUpdate(filter, itemData);
 };
-
