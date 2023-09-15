@@ -4,24 +4,35 @@ export type IUserRole = 'admin' | 'teacher' | 'staff';
 export type IActionType = 'created' | 'updated' | 'deleted';
 
 export type IUser = {
-  firstName: String;
-  middleName: String;
-  lastName: String;
-  email: String;
-  password: String;
-  designation: String;
-  department: String;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  designation: string;
+  department: string;
   role: IUserRole;
 };
 
 export type IItem = {
-  name: String;
-  description: String;
+  name: string;
+  description: string;
   working: number;
   notWorking: number;
-  location: String;
-  category: String;
+  location: string;
+  category: string;
   createdAt: Date;
+  updatedAt: Date;
+  expiry: Date;
+};
+
+export type IItemForm = {
+  name: string;
+  description: string;
+  working: number;
+  notWorking: number;
+  location: string;
+  category: string;
   updatedAt: Date;
   expiry: Date;
 };
