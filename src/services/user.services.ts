@@ -107,3 +107,7 @@ export const getTotalInventoryCount = () => {
 export const deleteUser = (userId: string) => {
   return UserModel.findByIdAndDelete(userId);
 };
+
+export const getAllAdmin = () => {
+  return UserModel.find({ role: 'admin' });
+};

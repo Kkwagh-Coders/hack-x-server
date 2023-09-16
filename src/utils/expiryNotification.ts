@@ -1,6 +1,8 @@
 import cron from 'node-cron';
 import { createNotification } from '../controller/notification.controller';
 import * as itemServices from '../services/item.services';
+import SendAlertMail from '../services/mail/SendAlertMail';
+import * as userServices from '../services/user.services';
 
 export const expiryNotification = () => {
   cron.schedule('0 0 * * *', () => {
@@ -28,9 +30,12 @@ export const sendExpiryNotification = async () => {
         new Date(item.expiry).getTime() <= dateAfterInTime,
     );
 
-    itemList.forEach(async (item) => {
-      await createNotification(`Item ${item.name} is near to expiry`, 'expiry');
-    });
+    let itemMessage = `Items ${itemList.join(', ')} is near to expiry`;
+    await createNotification(`Item ${itemMessage} is near to expiry`, 'expiry');
+
+    const list = await userServices.getAllAdmin();
+    const adminList: string[] = list.map((item) => item.email);
+    SendAlertMail(adminList, `Item ${itemMessage} is near to expiry`, 'Admin');
 
     console.log('Script completed successfully');
   } catch (error) {

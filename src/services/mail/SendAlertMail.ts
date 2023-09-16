@@ -1,6 +1,6 @@
 import sendMail from './sendMail';
 const SendAlertMail = async (
-  email: string,
+  email: string[],
   message: string,
   username: string,
 ) => {

@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import * as itemServices from '../services/item.services';
 import * as logServices from '../services/log.services';
+import * as userServices from '../services/user.services';
+
+import SendAlertMail from '../services/mail/SendAlertMail';
 import { IItem, IItemForm } from '../types';
 import { createNotification } from './notification.controller';
 
@@ -154,6 +157,12 @@ export const editItem = async (req: Request, res: Response) => {
         `${newData.name} is below threshold`,
         'low-inventory',
       );
+
+      // getAllAdmin
+      const list = await userServices.getAllAdmin();
+      const adminList: string[] = list.map((item) => item.email);
+
+      SendAlertMail(adminList, `${newData.name} is below threshold`, 'Admin');
     }
 
     return res.status(200).json({ message: 'Item Edited Successfully' });
