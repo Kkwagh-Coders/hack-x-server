@@ -91,7 +91,7 @@ export const getTotalInventoryCount = () => {
     {
       $group: {
         _id: null,
-        totalWorking: { $sum: '$working' },
+        totalWorking: { $sum: '$notWorking' },
       },
     },
     // {
