@@ -9,7 +9,7 @@ const SendForgotPasswordMail = async (email: string, token: string) => {
   const senderEmail = process.env['MAIL_USER'];
   const emailSubject = 'Reset Password Link';
   const emailTemplate = 'forgot_password_email';
-  const officialName = 'InterviewExperience';
+  const officialName = 'Hack-X';
   const context = { verificationURL, officialName };
 
   const mailOptions = {
