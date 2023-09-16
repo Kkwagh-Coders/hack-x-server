@@ -90,3 +90,7 @@ export const getCategoryWiseCount = () => {
     },
   ]);
 };
+
+export const getAllItems = () => {
+  return ItemModel.find();
+};
